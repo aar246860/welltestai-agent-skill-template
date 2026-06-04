@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -230,6 +231,8 @@ def main() -> None:
     parser.add_argument("--output-dir", help="Output directory for tables, figures, and report")
     parser.add_argument("--particles", type=int, default=24, help="Number of posterior particles")
     parser.add_argument("--max-points", type=int, default=8, help="Maximum observations used by the alpha scorer")
+    parser.add_argument("--oscillation-bootstrap", type=int, default=30, help="Bootstrap replicates for oscillatory screening reports")
+    parser.add_argument("--disable-oscillation-screening", action="store_true", help="Run the monotonic alpha report even if oscillation QC is triggered")
     args = parser.parse_args()
 
     skill_root = Path(__file__).resolve().parents[1]
@@ -296,6 +299,62 @@ def main() -> None:
             output_dir = Path.cwd() / "outputs" / case_id
     if html_path is None:
         html_path = output_dir / "reports" / f"{case_id}_slug_report.html"
+
+    if not args.disable_oscillation_screening:
+        from slug_osc_v1_inversion import analyze_slug_case
+        from slug_osc_v1_qc import detect_oscillation_qc
+        from slug_osc_v1_report import write_slug_osc_report
+        from slug_osc_v1_schema import SlugOscCase, SlugOscMetadata
+
+        osc_qc = detect_oscillation_qc(
+            data["time"].to_numpy(float),
+            data["normalized_head"].to_numpy(float),
+            equilibrium=float(case_data.get("equilibrium", 0.0)),
+        )
+        if (
+            osc_qc.flags["damped_oscillation_candidate"].triggered
+            or osc_qc.flags["out_of_monotonic_slug_model"].triggered
+        ):
+            osc_case = SlugOscCase(
+                case_id=case_id,
+                data=data.copy(),
+                metadata=SlugOscMetadata(
+                    time_unit=str(case_data.get("time_unit", "")),
+                    response_unit=str(case_data.get("response_unit", "dimensionless")),
+                    rw_cm=_as_float(case_data.get("rw_cm", case_data.get("well_radius_cm"))),
+                    slug_time_scale_seconds=_as_float(case_data.get("slug_time_scale_seconds")),
+                    log_alpha=_as_float(case_data.get("log_alpha")),
+                    ar_over_a=_as_float(case_data.get("ar_over_a")),
+                    source_path=str(data_path),
+                ),
+            )
+            analysis = analyze_slug_case(
+                osc_case,
+                equilibrium=float(case_data.get("equilibrium", 0.0)),
+                n_bootstrap=args.oscillation_bootstrap,
+            )
+            generated_report = write_slug_osc_report(analysis, html_path.parent)
+            if generated_report.resolve() != html_path.resolve():
+                shutil.copyfile(generated_report, html_path)
+            manifest_out = html_path.with_suffix(".manifest.json")
+            manifest_out.write_text(
+                json.dumps(
+                    {
+                        "case_id": case_id,
+                        "html_report": str(html_path),
+                        "output_dir": str(html_path.parent),
+                        "best_mode": analysis.best_model,
+                        "field_data_used_for_training": False,
+                        "release_scope": "slug/recovery with oscillation screening",
+                        "oscillation_screening_triggered": True,
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+            print(f"WellTestAI slug oscillation report written to: {html_path}")
+            print(f"Report assets written to: {html_path.parent}")
+            return
 
     result = fit_case(case, n_particles=args.particles, max_points=args.max_points)
     report_manifest = make_report(result, output_dir)

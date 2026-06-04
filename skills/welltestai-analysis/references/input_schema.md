@@ -12,6 +12,7 @@ Minimum `case.yaml` fields:
 - `rw_cm`: well radius in cm.
 - `slug_time_scale_seconds`: explicit slug time scale used for dimensionless interpretation.
 - `log_alpha`: slug geometry coordinate used by the bundled alpha runtime.
+- `equilibrium`: optional equilibrium level for oscillation screening. Default is `0.0`.
 
 Optional metadata:
 
@@ -26,6 +27,7 @@ CSV expectations:
 - one row per observation;
 - positive elapsed time;
 - normalized head recovery usually between 0 and 1;
+- oscillatory records may cross equilibrium and become negative after baseline correction;
 - no mixed units inside a single column;
 - blank or missing rows removed before analysis.
 
@@ -43,6 +45,7 @@ rw_cm: 5.0
 slug_time_scale_seconds: 1.0
 log_alpha: 0.0
 ar_over_a: 0.85
+equilibrium: 0.0
 ```
 
 If units, geometry, or normalization are uncertain, report a QC risk instead of guessing silently.

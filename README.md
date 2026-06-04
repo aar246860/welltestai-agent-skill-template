@@ -10,7 +10,8 @@ The current public release is intentionally narrow: it supports slug/recovery an
 - `skills/welltestai-analysis/scripts/run_slug_analysis.py`: deterministic local helper.
 - `skills/welltestai-analysis/assets/slug_alpha_runtime/`: bundled slug alpha runtime.
 - `skills/welltestai-analysis/references/`: input schema and claim boundary.
-- `examples/slug_golden/`: minimal synthetic slug/recovery example.
+- `examples/slug_golden/`: minimal monotonic slug/recovery example.
+- `examples/slug_oscillatory/`: damped oscillatory slug example.
 
 The repository does not include unpublished field datasets or manuscript files.
 
@@ -44,6 +45,14 @@ python skills\welltestai-analysis\scripts\run_slug_analysis.py `
 
 Open `outputs\slug_golden_report.html` in a browser.
 
+Run the bundled oscillatory slug example:
+
+```powershell
+python skills\welltestai-analysis\scripts\run_slug_analysis.py `
+  --case examples\slug_oscillatory\case.yaml `
+  --out outputs\slug_oscillatory_report.html
+```
+
 ## Minimum Slug Case File
 
 ```yaml
@@ -70,4 +79,4 @@ time,normalized_head
 
 ## Current Claim Boundary
 
-This alpha release supports local screening and report generation for slug/recovery data. It should not be used alone to claim a unique aquifer mechanism or final design parameter set. Lagging parameters are effective response-time coordinates unless additional identifiability evidence supports a stronger interpretation.
+This alpha release supports local screening and report generation for slug/recovery data, including QC routing for damped oscillatory records. It should not be used alone to claim a unique aquifer mechanism or final design parameter set. Lagging parameters are effective response-time coordinates unless additional identifiability evidence supports a stronger interpretation. Oscillatory reports provide damping and frequency screening coordinates, not final aquifer K.

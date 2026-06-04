@@ -21,6 +21,7 @@ Supported public modes are:
 - lagging-coordinate slug/recovery mode;
 - head/storage-lag slug coordinate;
 - equal-lag collapse check.
+- oscillation QC and inertial slug screening branch for damped oscillatory records.
 
 ## Expected Inputs
 
@@ -42,7 +43,7 @@ If input schema is unclear, read `references/input_schema.md`.
 1. Confirm that the user wants slug/recovery analysis.
 2. Confirm field data remain local.
 3. Validate the `case.yaml` and CSV.
-4. Run the deterministic helper script.
+4. Run the deterministic helper script. It will route oscillatory records to the Slug-Osc report.
 5. Read the HTML report, tables, and QC warnings.
 6. Explain candidate modes, intervals, warnings, and next recommended action.
 7. Avoid overclaiming mechanism uniqueness.
@@ -66,6 +67,8 @@ python skills/welltestai-analysis/scripts/run_slug_analysis.py `
 ## Interpretation Rules
 
 - Slug results depend strongly on geometry metadata and early-time quality.
+- Oscillatory records should not be forced into monotonic slug models.
+- The oscillatory branch reports damping and frequency screening coordinates, not final aquifer K.
 - Lagging parameters are effective response-time coordinates unless identifiability evidence is strong.
 - Broad intervals or mode ambiguity should be reported as uncertainty, not forced into one answer.
 - Nonmonotonic recovery, sparse sampling, missing time scale, or uncertain normalization should trigger QC warnings.
