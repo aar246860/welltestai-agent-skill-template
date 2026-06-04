@@ -21,7 +21,7 @@ Supported public modes are:
 - lagging-coordinate slug/recovery mode;
 - head/storage-lag slug coordinate;
 - equal-lag collapse check.
-- oscillation QC and inertial slug screening branch for damped oscillatory records.
+- oscillation QC and Inertial-LDL slug screening branch for damped oscillatory records.
 
 ## Expected Inputs
 
@@ -68,7 +68,7 @@ python skills/welltestai-analysis/scripts/run_slug_analysis.py `
 
 - Slug results depend strongly on geometry metadata and early-time quality.
 - Oscillatory records should not be forced into monotonic slug models.
-- The oscillatory branch reports damping and frequency screening coordinates, not final aquifer K.
+- The oscillatory branch reports damping and frequency screening coordinates, plus weakly identifiable LDL response-time coordinates when supported. It does not report final aquifer K.
 - Lagging parameters are effective response-time coordinates unless identifiability evidence is strong.
 - Broad intervals or mode ambiguity should be reported as uncertainty, not forced into one answer.
 - Nonmonotonic recovery, sparse sampling, missing time scale, or uncertain normalization should trigger QC warnings.

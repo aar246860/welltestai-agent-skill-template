@@ -79,4 +79,4 @@ time,normalized_head
 
 ## Current Claim Boundary
 
-This alpha release supports local screening and report generation for slug/recovery data, including QC routing for damped oscillatory records. It should not be used alone to claim a unique aquifer mechanism or final design parameter set. Lagging parameters are effective response-time coordinates unless additional identifiability evidence supports a stronger interpretation. Oscillatory reports provide damping and frequency screening coordinates, not final aquifer K.
+This alpha release supports local screening and report generation for slug/recovery data, including QC routing for damped oscillatory records. Oscillatory records are screened with an Inertial-LDL branch that separates wellbore inertia from lagging response-time coordinates. It should not be used alone to claim a unique aquifer mechanism or final design parameter set. Lagging parameters are effective response-time coordinates unless additional identifiability evidence supports a stronger interpretation. Oscillatory reports provide damping and frequency screening coordinates, not final aquifer K.

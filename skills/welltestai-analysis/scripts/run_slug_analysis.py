@@ -301,10 +301,10 @@ def main() -> None:
         html_path = output_dir / "reports" / f"{case_id}_slug_report.html"
 
     if not args.disable_oscillation_screening:
-        from slug_osc_v1_inversion import analyze_slug_case
+        from inertial_ldl_slug_v1_inversion import analyze_inertial_ldl_slug_case
+        from inertial_ldl_slug_v1_report import write_inertial_ldl_slug_report
+        from inertial_ldl_slug_v1_schema import InertialLDLSlugCase
         from slug_osc_v1_qc import detect_oscillation_qc
-        from slug_osc_v1_report import write_slug_osc_report
-        from slug_osc_v1_schema import SlugOscCase, SlugOscMetadata
 
         osc_qc = detect_oscillation_qc(
             data["time"].to_numpy(float),
@@ -315,27 +315,25 @@ def main() -> None:
             osc_qc.flags["damped_oscillation_candidate"].triggered
             or osc_qc.flags["out_of_monotonic_slug_model"].triggered
         ):
-            osc_case = SlugOscCase(
+            inertial_case = InertialLDLSlugCase(
                 case_id=case_id,
-                data=data.copy(),
-                metadata=SlugOscMetadata(
-                    time_unit=str(case_data.get("time_unit", "")),
-                    response_unit=str(case_data.get("response_unit", "dimensionless")),
-                    rw_cm=_as_float(case_data.get("rw_cm", case_data.get("well_radius_cm"))),
-                    slug_time_scale_seconds=_as_float(case_data.get("slug_time_scale_seconds")),
-                    log_alpha=_as_float(case_data.get("log_alpha")),
-                    ar_over_a=_as_float(case_data.get("ar_over_a")),
-                    source_path=str(data_path),
-                ),
+                time=data["time"].to_numpy(float),
+                normalized_head=data["normalized_head"].to_numpy(float),
+                metadata={
+                    "time_unit": str(case_data.get("time_unit", "")),
+                    "response_unit": str(case_data.get("response_unit", "dimensionless")),
+                    "rw_cm": _as_float(case_data.get("rw_cm", case_data.get("well_radius_cm"))),
+                    "slug_time_scale_seconds": _as_float(case_data.get("slug_time_scale_seconds")),
+                    "log_alpha": _as_float(case_data.get("log_alpha")),
+                    "ar_over_a": _as_float(case_data.get("ar_over_a")),
+                    "source_path": str(data_path),
+                },
             )
-            analysis = analyze_slug_case(
-                osc_case,
-                equilibrium=float(case_data.get("equilibrium", 0.0)),
+            analysis = analyze_inertial_ldl_slug_case(
+                inertial_case,
                 n_bootstrap=args.oscillation_bootstrap,
             )
-            generated_report = write_slug_osc_report(analysis, html_path.parent)
-            if generated_report.resolve() != html_path.resolve():
-                shutil.copyfile(generated_report, html_path)
+            write_inertial_ldl_slug_report(analysis, html_path)
             manifest_out = html_path.with_suffix(".manifest.json")
             manifest_out.write_text(
                 json.dumps(
@@ -345,14 +343,15 @@ def main() -> None:
                         "output_dir": str(html_path.parent),
                         "best_mode": analysis.best_model,
                         "field_data_used_for_training": False,
-                        "release_scope": "slug/recovery with oscillation screening",
+                        "release_scope": "slug/recovery with Inertial-LDL oscillation screening",
                         "oscillation_screening_triggered": True,
+                        "claim_boundary": "Damping/frequency are screening coordinates. LDL tau is effective and may be weakly identifiable. Final K requires geometry and formal parameter transformation.",
                     },
                     indent=2,
                 ),
                 encoding="utf-8",
             )
-            print(f"WellTestAI slug oscillation report written to: {html_path}")
+            print(f"WellTestAI Inertial-LDL slug report written to: {html_path}")
             print(f"Report assets written to: {html_path.parent}")
             return
 
