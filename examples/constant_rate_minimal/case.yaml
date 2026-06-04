@@ -1,12 +1,14 @@
 case_id: example_constant_rate_minimal
 test_type: constant_rate
-observations: observations.csv
+data_file: observations.csv
 time_column: time_min
 response_column: drawdown_cm
 time_unit: min
 response_unit: cm
-pumping_rate: 600
-pumping_rate_unit: mL/min
-pumping_well_radius_cm: 5
-observation_radius_cm: 100
-
+radius_cm: 100
+well_radius_cm: 5
+forcing_value: 600
+forcing_unit: mL/min
+transmissivity_scale_cm2_min: 120
+storativity_scale: 0.001
+noise_fraction: 0.03

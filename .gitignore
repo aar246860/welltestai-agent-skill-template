@@ -8,6 +8,7 @@ env/
 dist/
 build/
 *.joblib
+!skills/welltestai-analysis/assets/models/*.joblib
 *.pkl
 *.pt
 *.pth
@@ -16,4 +17,3 @@ field_data/
 private_data/
 reports/
 outputs/
-

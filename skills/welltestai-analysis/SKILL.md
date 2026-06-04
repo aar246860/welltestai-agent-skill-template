@@ -17,8 +17,8 @@ Ask for or locate:
 
 - `case.yaml`
 - referenced observations CSV
-- local `welltestai_lite` installation
-- local model path if the runtime needs one
+- bundled WellTestAI Lite runtime in this Skill, or a local `welltestai_lite` installation
+- bundled calibrated model, or a user-provided local model path
 - desired output report path
 
 If input schema is unclear, read `references/input_schema.md`.
@@ -38,11 +38,12 @@ Preferred helper:
 ```powershell
 python skills/welltestai-analysis/scripts/run_welltestai_analysis.py `
   --case path\to\case.yaml `
-  --model path\to\model.joblib `
   --out path\to\report.html
 ```
 
-Fallback direct commands:
+Use `--model path\to\model.joblib` only when overriding the bundled calibrated model.
+
+Fallback direct commands when using an external installation:
 
 ```powershell
 python -m welltestai_lite.cli validate path\to\case.yaml
@@ -72,4 +73,3 @@ Return a concise consultant-readable summary:
 - next recommended test or data requirement.
 
 Do not write software-engineering jargon into the user-facing interpretation.
-

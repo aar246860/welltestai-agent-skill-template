@@ -11,7 +11,7 @@ The skill is designed for consultant-facing pilot use. It helps an AI coding age
 - `skills/welltestai-analysis/scripts/run_welltestai_analysis.py`: deterministic helper for validate/analyze/report runs.
 - `examples/`: a minimal synthetic case template.
 
-This repository does not include trained model weights, unpublished field datasets, or manuscript files.
+This repository includes a small calibrated demonstration model so the Skill can run immediately after dependencies are available. It does not include unpublished field datasets or manuscript files.
 
 ## Install the Skill
 
@@ -28,11 +28,16 @@ Restart Codex after copying the skill.
 
 ## Use With WellTestAI Local Lite
 
-Install or unpack `welltestai_lite` separately, then point the agent to:
+The Skill includes a bundled WellTestAI Lite runtime and calibrated model. Point the agent to:
 
 - a `case.yaml` file;
 - an observations CSV file referenced by the case file;
-- a local model file path, if required by the installed runtime.
+
+Python dependencies are still required:
+
+```powershell
+python -m pip install numpy pandas scikit-learn joblib PyYAML matplotlib
+```
 
 Example prompt:
 
@@ -41,7 +46,14 @@ Use the WellTestAI analysis skill to validate this case.yaml, run the local repo
 explain the response-family candidate, QC warnings, and recommended next action.
 ```
 
+Manual command:
+
+```powershell
+python skills\welltestai-analysis\scripts\run_welltestai_analysis.py `
+  --case examples\constant_rate_minimal\case.yaml `
+  --out outputs\constant_rate_report.html
+```
+
 ## Claim Boundary
 
 The skill supports screening and report generation. It should not be used to claim that a field dataset proves a unique aquifer mechanism. Near-well effects such as wellbore storage and skin are interpreted as effects, not standalone aquifer families.
-

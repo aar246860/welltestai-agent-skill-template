@@ -1,3 +1,7 @@
+param(
+    [switch]$InstallDependencies
+)
+
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -11,5 +15,7 @@ if (!(Test-Path $src)) {
 New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
 Copy-Item -Recurse -Force $src $dst
 Write-Host "Installed WellTestAI skill to $dst"
+if ($InstallDependencies) {
+    python -m pip install numpy pandas scikit-learn joblib PyYAML matplotlib
+}
 Write-Host "Restart Codex to load the skill."
-
