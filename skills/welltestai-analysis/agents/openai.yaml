@@ -1,4 +1,3 @@
-display_name: WellTestAI Analysis
-short_description: Validate and interpret local aquifer-test data with WellTestAI Lite.
-default_prompt: Analyze this WellTestAI case locally, generate the report, and explain the response candidate, effect flags, QC warnings, and recommended next action without overclaiming the mechanism.
-
+display_name: WellTestAI Slug Analysis
+short_description: Analyze local slug/recovery data with the WellTestAI Slug Alpha runtime.
+default_prompt: Validate this slug-test case.yaml and CSV, run the local WellTestAI slug report, and explain candidate modes, parameter intervals, QC warnings, and recommended next action without overclaiming the mechanism.

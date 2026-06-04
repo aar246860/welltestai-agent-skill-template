@@ -1,0 +1,11 @@
+case_id: golden_slug_classical
+test_type: slug
+data_file: observations.csv
+time_column: time
+response_column: normalized_head
+time_unit: s
+response_unit: dimensionless
+rw_cm: 5.0
+slug_time_scale_seconds: 1.0
+log_alpha: 0.0
+ar_over_a: 0.85

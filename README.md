@@ -1,71 +1,73 @@
-# WellTestAI Agent Skill Template
+# WellTestAI Slug Agent Skill Template
 
-This repository provides a Codex-compatible Agent Skill for natural-language assisted well-test analysis using the local `welltestai_lite` package.
+This repository provides a Codex-compatible Agent Skill for natural-language assisted slug-test and recovery-test screening using a bundled local WellTestAI Slug Alpha runtime.
 
-The skill is designed for consultant-facing pilot use. It helps an AI coding agent validate input files, run a local WellTestAI analysis, interpret QC warnings, and generate an HTML report without uploading field data to a cloud service.
+The current public release is intentionally narrow: it supports slug/recovery analysis only. Constant-rate pumping and constant-head-test workflows are not exposed in this Skill.
 
 ## What This Repository Contains
 
 - `skills/welltestai-analysis/SKILL.md`: the Agent Skill.
-- `skills/welltestai-analysis/references/`: concise domain references loaded only when needed.
-- `skills/welltestai-analysis/scripts/run_welltestai_analysis.py`: deterministic helper for validate/analyze/report runs.
-- `examples/`: a minimal synthetic case template.
+- `skills/welltestai-analysis/scripts/run_slug_analysis.py`: deterministic local helper.
+- `skills/welltestai-analysis/assets/slug_alpha_runtime/`: bundled slug alpha runtime.
+- `skills/welltestai-analysis/references/`: input schema and claim boundary.
+- `examples/slug_golden/`: minimal synthetic slug/recovery example.
 
-This repository includes a small calibrated demonstration model so the Skill can run immediately after dependencies are available. It does not include unpublished field datasets or manuscript files.
+The repository does not include unpublished field datasets or manuscript files.
 
 ## Install the Skill
 
 Copy the skill folder into your Codex skills directory:
 
 ```powershell
-$src = "skills\welltestai-analysis"
-$dst = "$env:USERPROFILE\.codex\skills\welltestai-analysis"
-New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
-Copy-Item -Recurse -Force $src $dst
+.\INSTALL_SKILL.ps1 -InstallDependencies
+```
+
+If PowerShell blocks local scripts, run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\INSTALL_SKILL.ps1 -InstallDependencies
 ```
 
 Restart Codex after copying the skill.
 
-## Use With WellTestAI Local Lite
+The installer copies the Skill only. Field data remain on your machine.
 
-The Skill includes a bundled WellTestAI Lite runtime and calibrated model. Point the agent to:
+## Manual Test
 
-- a `case.yaml` file;
-- an observations CSV file referenced by the case file;
-
-Python dependencies are still required:
+Run the bundled slug example:
 
 ```powershell
-python -m pip install numpy pandas scikit-learn joblib PyYAML matplotlib
+python skills\welltestai-analysis\scripts\run_slug_analysis.py `
+  --case examples\slug_golden\case.yaml `
+  --out outputs\slug_golden_report.html
 ```
 
-## Current Model Scope
+Open `outputs\slug_golden_report.html` in a browser.
 
-The bundled calibrated model currently supports constant-rate, constant-head, and finite-boundary screening workflows. Its active labels are:
+## Minimum Slug Case File
 
-- `boundary_no_flow`
-- `boundary_recharge`
-- `ldl_full`
-- `skin`
-- `wellbore_storage`
-
-Slug/recovery interpretation is not yet included in this bundled model. The Skill will not silently classify slug data with the bundled model. A validated slug-capable model should be added in a future release.
-
-Example prompt:
-
-```text
-Use the WellTestAI analysis skill to validate this case.yaml, run the local report,
-explain the response-family candidate, QC warnings, and recommended next action.
+```yaml
+case_id: example_slug
+test_type: slug
+data_file: observations.csv
+time_column: time
+response_column: normalized_head
+time_unit: s
+response_unit: dimensionless
+rw_cm: 5.0
+slug_time_scale_seconds: 1.0
+log_alpha: 0.0
 ```
 
-Manual command:
+The CSV should contain elapsed time and normalized head recovery:
 
-```powershell
-python skills\welltestai-analysis\scripts\run_welltestai_analysis.py `
-  --case examples\constant_rate_minimal\case.yaml `
-  --out outputs\constant_rate_report.html
+```csv
+time,normalized_head
+0.002,0.755
+0.017,0.603
+0.035,0.520
 ```
 
-## Claim Boundary
+## Current Claim Boundary
 
-The skill supports screening and report generation. It should not be used to claim that a field dataset proves a unique aquifer mechanism. Near-well effects such as wellbore storage and skin are interpreted as effects, not standalone aquifer families.
+This alpha release supports local screening and report generation for slug/recovery data. It should not be used alone to claim a unique aquifer mechanism or final design parameter set. Lagging parameters are effective response-time coordinates unless additional identifiability evidence supports a stronger interpretation.

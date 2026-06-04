@@ -16,6 +16,6 @@ New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
 Copy-Item -Recurse -Force $src $dst
 Write-Host "Installed WellTestAI skill to $dst"
 if ($InstallDependencies) {
-    python -m pip install numpy pandas scikit-learn joblib PyYAML matplotlib
+    python -m pip install numpy pandas scipy mpmath PyYAML matplotlib
 }
 Write-Host "Restart Codex to load the skill."

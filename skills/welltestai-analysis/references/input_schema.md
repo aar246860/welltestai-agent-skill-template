@@ -1,31 +1,48 @@
-# WellTestAI Input Schema
+# WellTestAI Slug Input Schema
 
-Minimum case file fields:
+Minimum `case.yaml` fields:
 
 - `case_id`: readable case identifier.
-- `test_type`: `constant_rate`, `constant_head`, or `finite_boundary` for screening demos.
+- `test_type`: `slug` or `recovery`.
 - `data_file`: path to CSV relative to the case file.
-- `time_column`: time field in the CSV.
-- `response_column`: response field in the CSV.
-- `time_unit`: for example `min`, `hour`, or `s`.
-- `response_unit`: for example `cm`, `m`, `mL/min`, or normalized response.
+- `time_column`: elapsed-time field in the CSV.
+- `response_column`: normalized head field in the CSV.
+- `time_unit`: for example `s`, `min`, or `h`.
+- `response_unit`: usually `dimensionless`.
+- `rw_cm`: well radius in cm.
+- `slug_time_scale_seconds`: explicit slug time scale used for dimensionless interpretation.
+- `log_alpha`: slug geometry coordinate used by the bundled alpha runtime.
 
-Recommended metadata:
+Optional metadata:
 
-- `well_radius_cm`: pumping well radius;
-- `radius_cm`: observation radius or representative radius;
-- `forcing_value`: pumping rate for constant-rate tests or maintained drawdown scale for constant-head tests;
-- `forcing_unit`: forcing unit;
-- aquifer thickness if known;
-- sensor resolution and preprocessing notes;
-- recovery or late-time coverage flag.
+- `ar_over_a`: casing or pressurization area ratio if available;
+- sensor resolution;
+- baseline correction notes;
+- screen interval and well construction notes;
+- preprocessing notes.
 
 CSV expectations:
 
 - one row per observation;
-- numeric time values;
-- numeric response values;
+- positive elapsed time;
+- normalized head recovery usually between 0 and 1;
 - no mixed units inside a single column;
 - blank or missing rows removed before analysis.
 
-If units are uncertain, stop and report an `inconsistent_units` risk instead of guessing silently.
+Example:
+
+```yaml
+case_id: slug_demo
+test_type: slug
+data_file: observations.csv
+time_column: time
+response_column: normalized_head
+time_unit: s
+response_unit: dimensionless
+rw_cm: 5.0
+slug_time_scale_seconds: 1.0
+log_alpha: 0.0
+ar_over_a: 0.85
+```
+
+If units, geometry, or normalization are uncertain, report a QC risk instead of guessing silently.
