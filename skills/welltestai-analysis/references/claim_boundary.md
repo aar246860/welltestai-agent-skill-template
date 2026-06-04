@@ -15,8 +15,8 @@ Avoid these statements:
 - Wellbore storage or skin is an aquifer family.
 - Boundary conditions are confirmed without field geometry or late-time evidence.
 - LDL parameters are unique physical constants when identifiability is weak.
+- The bundled model supports slug/recovery tests.
 
 Recommended external wording:
 
 > The analysis provides a response-family screening result and QC-guided interpretation. Final engineering interpretation should consider site geology, well construction, pumping history, and independent boundary evidence.
-

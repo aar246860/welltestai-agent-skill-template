@@ -39,6 +39,18 @@ Python dependencies are still required:
 python -m pip install numpy pandas scikit-learn joblib PyYAML matplotlib
 ```
 
+## Current Model Scope
+
+The bundled calibrated model currently supports constant-rate, constant-head, and finite-boundary screening workflows. Its active labels are:
+
+- `boundary_no_flow`
+- `boundary_recharge`
+- `ldl_full`
+- `skin`
+- `wellbore_storage`
+
+Slug/recovery interpretation is not yet included in this bundled model. The Skill will not silently classify slug data with the bundled model. A validated slug-capable model should be added in a future release.
+
 Example prompt:
 
 ```text

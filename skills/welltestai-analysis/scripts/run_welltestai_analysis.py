@@ -8,6 +8,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import yaml
+
+
+UNSUPPORTED_BUNDLED_TEST_TYPES = {"slug", "recovery"}
+
 
 def run(cmd: list[str], env: dict[str, str]) -> None:
     completed = subprocess.run(cmd, text=True, env=env)
@@ -47,6 +52,18 @@ def main() -> None:
         raise SystemExit(f"Missing bundled WellTestAI runtime: {bundled_src}")
     if not formal_runtime.exists():
         raise SystemExit(f"Missing bundled formal runtime: {formal_runtime}")
+
+    with case_path.open("r", encoding="utf-8") as handle:
+        case_data = yaml.safe_load(handle) or {}
+    test_type = str(case_data.get("test_type", "")).lower()
+    using_bundled_model = args.model is None
+    if using_bundled_model and test_type in UNSUPPORTED_BUNDLED_TEST_TYPES:
+        raise SystemExit(
+            "The bundled calibrated model does not yet include slug/recovery "
+            "families. Use this Skill for constant-rate, constant-head, and "
+            "finite-boundary screening, or provide a validated slug-capable "
+            "model with --model."
+        )
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
 

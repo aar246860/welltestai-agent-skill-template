@@ -1,6 +1,6 @@
 ---
 name: welltestai-analysis
-description: Use when a user wants an AI agent to validate, analyze, interpret, or report pumping-test, constant-head-test, finite-boundary screening, or well-test CSV/case.yaml data with a local WellTestAI Lite installation. The skill guides local-only consultant workflows, QC warnings, response-family screening, near-well effect flags, and cautious claim boundaries.
+description: Use when a user wants an AI agent to validate, analyze, interpret, or report constant-rate pumping-test, constant-head-test, or finite-boundary screening CSV/case.yaml data with the bundled WellTestAI Lite runtime and calibrated model. The skill guides local-only consultant workflows, QC warnings, response-family screening, near-well effect flags, and cautious claim boundaries. The bundled model does not yet support slug/recovery interpretation unless the user provides a separately validated slug-capable model.
 ---
 
 # WellTestAI Analysis
@@ -10,6 +10,18 @@ Use this skill to help a user run local WellTestAI Lite analysis from natural la
 ## Core Rule
 
 Treat WellTestAI output as a screening and reporting aid. Do not state that a field case proves a unique aquifer mechanism. Report model candidates, effect flags, uncertainty, residual behavior, QC warnings, and recommended next actions.
+
+## Current Bundled Model Scope
+
+The bundled calibrated model supports these screening labels:
+
+- `boundary_no_flow`
+- `boundary_recharge`
+- `ldl_full`
+- `skin`
+- `wellbore_storage`
+
+It does not yet contain a validated slug/recovery model family. If a user provides slug-test data, stop and explain that slug support requires a separately validated slug-capable model or the next training release.
 
 ## Expected Inputs
 
